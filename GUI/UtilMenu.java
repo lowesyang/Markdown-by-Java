@@ -1,13 +1,39 @@
 package GUI;
 
+import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
+import org.docx4j.fonts.IdentityPlusMapper;
+import org.docx4j.fonts.Mapper;
+import org.docx4j.fonts.PhysicalFont;
+import org.docx4j.fonts.PhysicalFonts;
+import org.docx4j.jaxb.Context;
+import org.docx4j.model.structure.PageSizePaper;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.wml.RFonts;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.*;
+import java.net.URL;
 
 public class UtilMenu extends JMenuBar {
-    public UtilMenu(){
+    private JFileChooser saveJfc,openJfc;
+
+    public UtilMenu(Editor editor,DisplayPane htmlPane){
+        this.openJfc=new JFileChooser("./");
+        this.saveJfc=new JFileChooser("./");
+        this.openJfc.setFileSelectionMode(JFileChooser.FILES_ONLY|JFileChooser.OPEN_DIALOG);
+        this.saveJfc.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
+
+        // prevent to choose all types of files
+        this.openJfc.setAcceptAllFileFilterUsed(false);
+        this.saveJfc.setAcceptAllFileFilterUsed(false);
+
+        //set limit types of files can be chosen
+        this.openJfc.addChoosableFileFilter(new LowesFileFilter(".css","css 文件(*.css)"));
+        this.saveJfc.addChoosableFileFilter(new LowesFileFilter(".docx","docx 文件 (*.docx)"));
+
         JMenu fileMenu=new JMenu("file");
         JMenu resetMenu=new JMenu("edit");
 
@@ -34,18 +60,69 @@ public class UtilMenu extends JMenuBar {
         this.add(fileMenu);
         this.add(resetMenu);
 
-//        bind event
+        // import css event
         importCss.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                openJfc.setDialogTitle("导入css文件");
+                int option=openJfc.showDialog(null,"导入");
+                if(option==JFileChooser.APPROVE_OPTION) {
+                    File file = openJfc.getSelectedFile();
+                    if (file.isFile()) {
+                        try {
+                            BufferedReader cssData = new BufferedReader(
+                                    new InputStreamReader(
+                                            new FileInputStream(file)
+                                    )
+                            );
+                            String temp = "", cssText = "";
+                            while ((temp = cssData.readLine()) != null) {
+                                cssText += temp;
+                            }
+                            htmlPane.importCss(cssText);        //import css
+                            editor.generateHTML(htmlPane);      //refresh htmlPan
 
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "请导入.css文件", "警告", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
             }
         });
 
+        //export docx event
         exportDocs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                saveJfc.setSelectedFile(new File("output"));
+                saveJfc.setDialogTitle("导出为word文件");
+                int option=saveJfc.showDialog(null,"导出");
+                if(option==JFileChooser.APPROVE_OPTION) {
+                    File file = saveJfc.getSelectedFile();
+                    String path = "";
+                    if (file.isDirectory()) {
+                        path = file.getAbsolutePath() + "/output.docx";
+                    } else {
+                        System.out.println(file.getAbsolutePath());
+                        path = file.getAbsolutePath();
+                        if (!path.toLowerCase().endsWith(".docx")) {
+                            path += ".docx";
+                        }
+                    }
+                    try {
 
+                        //A4  horizontal direction true
+                        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage(PageSizePaper.A4, true);
+                        XHTMLImporterImpl xhtmlImporter = new XHTMLImporterImpl(wordMLPackage);
+                        wordMLPackage.getMainDocumentPart().getContent().addAll(xhtmlImporter.convert(htmlPane.getXHTML(), null));
+
+                        wordMLPackage.save(new File(path));     //export docx file
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -56,4 +133,6 @@ public class UtilMenu extends JMenuBar {
             }
         });
     }
+
 }
+

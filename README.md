@@ -9,3 +9,4 @@ A simple markdown editor by Java
 - Support importing extra .css files.
 - Support export markdown file as .docx.
 - HTML is recognizable.
+

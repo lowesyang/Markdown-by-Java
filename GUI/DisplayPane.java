@@ -1,5 +1,7 @@
 package GUI;
 
+import org.jsoup.Jsoup;
+
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
@@ -12,7 +14,7 @@ public class DisplayPane extends JScrollPane {
     public DisplayPane(){
         this.htmlPane=new JEditorPane();
         this.kit=new HTMLEditorKit();
-        this.htmlPane.setEditorKit(kit);
+        this.htmlPane.setEditorKit(this.kit);
         this.htmlPane.setContentType("text/html");
         this.htmlPane.setEditable(false);
         this.htmlPane.setFont(new Font("TimesRoman", Font.PLAIN,14));
@@ -20,8 +22,14 @@ public class DisplayPane extends JScrollPane {
         this.setBounds(10,10,380,520);
     }
 
-    public void getContent(String html){
+    public void setContent(String html){
         this.htmlPane.setText(html);
+    }
+
+    public String getXHTML(){
+        String html=this.htmlPane.getText();
+        System.out.println(html);
+        return Jsoup.parse(html).html();
     }
 
     public void importCss(String css){
