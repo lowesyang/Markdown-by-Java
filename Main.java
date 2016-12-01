@@ -17,14 +17,14 @@ public class Main {
         panel1.setLayout(null);
         panel2.setLayout(null);
 
-        UtilMenu menuBar=new UtilMenu();
-        frame.setJMenuBar(menuBar);
-
         DisplayPane displayPane=new DisplayPane();
         panel1.add(displayPane);
 
         Editor editor=new Editor(displayPane);
         panel2.add(editor);
+
+        UtilMenu menuBar=new UtilMenu(editor,displayPane);
+        frame.setJMenuBar(menuBar);
 
         frame.add(panel1);
         frame.add(panel2);

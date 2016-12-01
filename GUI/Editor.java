@@ -52,7 +52,7 @@ public class Editor extends JScrollPane{
     }
 
     //generate from text with format of markdown to HTML
-    private void generateHTML(DisplayPane displayPane) throws IOException {
+    public void generateHTML(DisplayPane displayPane) throws IOException {
         String markdown=this.editor.getText();
         displayPane.getContent(this.processor.markdown(markdown));
     }
