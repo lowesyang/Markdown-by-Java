@@ -16,8 +16,7 @@ public class LowesFileFilter extends FileFilter{
     public boolean accept(File f) {
         if(f.isDirectory()) return true;
         String fileName=f.getName();
-        if(fileName.toLowerCase().endsWith(this.ends)) return true;
-        return false;
+        return fileName.toLowerCase().endsWith(this.ends);
     }
 
     @Override
