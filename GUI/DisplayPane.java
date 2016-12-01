@@ -19,16 +19,16 @@ public class DisplayPane extends JScrollPane {
         this.htmlPane.setEditable(false);
         this.htmlPane.setFont(new Font("TimesRoman", Font.PLAIN,14));
         this.getViewport().add(this.htmlPane);
-        this.setBounds(10,10,380,520);
+        this.setBounds(0,10,300,520);
     }
 
     public void setContent(String html){
+        System.out.println(html);
         this.htmlPane.setText(html);
     }
 
     public String getXHTML(){
         String html=this.htmlPane.getText();
-        System.out.println(html);
         return Jsoup.parse(html).html();
     }
 

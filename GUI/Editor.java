@@ -19,7 +19,7 @@ public class Editor extends JScrollPane{
         this.editor = new JTextPane();
         this.editor.setFont(new Font("TimesRoman", Font.PLAIN,14));
         this.getViewport().add(this.editor);
-        this.setBounds(2,10,380,520);
+        this.setBounds(5,10,300,520);
 
         this.editor.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -57,5 +57,8 @@ public class Editor extends JScrollPane{
         displayPane.setContent(this.processor.markdown(markdown));
     }
 
+    public JTextPane getEditor(){
+        return this.editor;
+    }
 
 }
