@@ -9,11 +9,14 @@ public class Main {
     public static void main(String[] args) throws IOException {
         JFrame frame=new JFrame("MyFrame");
         Container rootPane=frame.getContentPane();
-        frame.setLayout(new BoxLayout(rootPane,BoxLayout.X_AXIS));
+        frame.setLayout(null);
 
         JPanel left=new JPanel();
+        left.setBounds(10,0,305,520);
         JPanel middle=new JPanel();
+        middle.setBounds(315,0,305,520);
         JPanel right=new JPanel();
+        right.setBounds(620,0,205,520);
         left.setLayout(null);
         middle.setLayout(null);
         right.setLayout(null);
@@ -43,7 +46,8 @@ public class Main {
         rootPane.add(middle);
         rootPane.add(right);
 
-        frame.setSize(1000,600);
+        frame.setSize(850,600);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

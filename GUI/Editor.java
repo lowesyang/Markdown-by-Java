@@ -61,9 +61,11 @@ public class Editor extends JScrollPane{
         catalog.getList().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
+                int index=catalog.getList().getSelectedIndex();
+                if(index<0) return;
                 ArrayList<Integer> arrayList=catalog.getRowArr();
-                System.out.println(arrayList.get(e.getLastIndex()));
-                scrollBar.setValue(arrayList.get(e.getLastIndex())*19);
+                System.out.println(catalog.getList().getSelectedIndex());
+                scrollBar.setValue(arrayList.get(index)*19);
             }
         });
     }

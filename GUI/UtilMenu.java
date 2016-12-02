@@ -35,7 +35,6 @@ public class UtilMenu extends JMenuBar {
         this.saveJfc.addChoosableFileFilter(new LowesFileFilter(".docx","docx 文件 (*.docx)"));
 
         JMenu fileMenu=new JMenu("file");
-        JMenu resetMenu=new JMenu("edit");
 
         JMenuItem importCss=new JMenuItem("Import file",'I');
         JMenuItem exportDocs=new JMenuItem("Export as docx",'E');
@@ -45,20 +44,12 @@ public class UtilMenu extends JMenuBar {
         exportDocs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.CTRL_MASK));
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,ActionEvent.CTRL_MASK));
 
-        JMenuItem clearCss=new JMenuItem("Clear CSS",'L');
-        JMenuItem reset=new JMenuItem("Reset",'R');
-        clearCss.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,ActionEvent.CTRL_MASK));
-        reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,ActionEvent.CTRL_MASK));
-
         fileMenu.add(importCss);
         fileMenu.add(exportDocs);
         fileMenu.add(exitItem);
 
-        resetMenu.add(clearCss);
-        resetMenu.add(reset);
 
         this.add(fileMenu);
-        this.add(resetMenu);
 
         // import css event
         importCss.addActionListener(new ActionListener() {
@@ -85,6 +76,7 @@ public class UtilMenu extends JMenuBar {
                             }
                             else if(file.getName().endsWith(".md")){       //if markdown
                                 editor.getEditor().setText(text);
+                                editor.getEditor().setCaretPosition(0);
                             }
                             else {
                                 JOptionPane.showMessageDialog(null, "请导入.css或.md文件", "警告", JOptionPane.INFORMATION_MESSAGE);
