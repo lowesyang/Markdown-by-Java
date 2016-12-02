@@ -23,8 +23,4 @@ public class LowesFileFilter extends FileFilter{
     public String getDescription() {
         return this.description;
     }
-
-    public String getEnds(){
-        return this.ends;
-    }
 }

@@ -14,18 +14,19 @@ public class Editor extends JScrollPane{
     private JTextPane editor;
     private MarkdownProcessor processor;
 
-    public Editor(DisplayPane displayPane) throws IOException {
+    public Editor(DisplayPane displayPane,Catalog catalog) throws IOException {
         this.processor=new MarkdownProcessor();
         this.editor = new JTextPane();
         this.editor.setFont(new Font("TimesRoman", Font.PLAIN,14));
         this.getViewport().add(this.editor);
-        this.setBounds(2,10,380,520);
+        this.setBounds(5,10,300,520);
 
         this.editor.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 try {
                     generateHTML(displayPane);
+                    catalog.update(editor.getText());
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -35,6 +36,7 @@ public class Editor extends JScrollPane{
             public void removeUpdate(DocumentEvent e) {
                 try {
                     generateHTML(displayPane);
+                    catalog.update(editor.getText());
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -44,6 +46,7 @@ public class Editor extends JScrollPane{
             public void changedUpdate(DocumentEvent e) {
                 try {
                     generateHTML(displayPane);
+                    catalog.update(editor.getText());
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -54,8 +57,11 @@ public class Editor extends JScrollPane{
     //generate from text with format of markdown to HTML
     public void generateHTML(DisplayPane displayPane) throws IOException {
         String markdown=this.editor.getText();
-        displayPane.getContent(this.processor.markdown(markdown));
+        displayPane.setContent(this.processor.markdown(markdown));
     }
 
+    public JTextPane getEditor(){
+        return this.editor;
+    }
 
 }

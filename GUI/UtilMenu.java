@@ -1,21 +1,16 @@
 package GUI;
 
-import org.docx4j.convert.in.xhtml.XHTMLImporter;
+import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.fonts.IdentityPlusMapper;
 import org.docx4j.fonts.Mapper;
 import org.docx4j.fonts.PhysicalFont;
 import org.docx4j.fonts.PhysicalFonts;
 import org.docx4j.jaxb.Context;
 import org.docx4j.model.structure.PageSizePaper;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.RFonts;
 
 import javax.swing.*;
-import javax.swing.filechooser.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.text.html.StyleSheet;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -69,28 +64,30 @@ public class UtilMenu extends JMenuBar {
         importCss.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                openJfc.showDialog(null,"导入");
-                File file=openJfc.getSelectedFile();
-                if(file.isFile()){
-                    try {
-                        BufferedReader cssData=new BufferedReader(
-                                new InputStreamReader(
-                                        new FileInputStream(file)
-                                )
-                        );
-                        String temp="",cssText="";
-                        while((temp=cssData.readLine())!=null){
-                            cssText+=temp;
-                        }
-                        htmlPane.importCss(cssText);        //import css
-                        editor.generateHTML(htmlPane);      //refresh htmlPan
+                openJfc.setDialogTitle("导入css文件");
+                int option=openJfc.showDialog(null,"导入");
+                if(option==JFileChooser.APPROVE_OPTION) {
+                    File file = openJfc.getSelectedFile();
+                    if (file.isFile()) {
+                        try {
+                            BufferedReader cssData = new BufferedReader(
+                                    new InputStreamReader(
+                                            new FileInputStream(file)
+                                    )
+                            );
+                            String temp = "", cssText = "";
+                            while ((temp = cssData.readLine()) != null) {
+                                cssText += temp;
+                            }
+                            htmlPane.importCss(cssText);        //import css
+                            editor.generateHTML(htmlPane);      //refresh htmlPan
 
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "请导入.css文件", "警告", JOptionPane.INFORMATION_MESSAGE);
                     }
-                }
-                else{
-                    JOptionPane.showMessageDialog(null,"请导入.css文件","警告",JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -100,28 +97,31 @@ public class UtilMenu extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveJfc.setSelectedFile(new File("output"));
-                saveJfc.showDialog(null,"导出");
-                File file=saveJfc.getSelectedFile();
-                String path="";
-                if(file.isDirectory()){
-                    path=file.getAbsolutePath()+"/output.docx";
-                }
-                else if(file.isFile()){
-                    path=file.getAbsolutePath();
-                    if(!path.toLowerCase().endsWith(".docx")){
-                        path+=".docx";
+                saveJfc.setDialogTitle("导出为word文件");
+                int option=saveJfc.showDialog(null,"导出");
+                if(option==JFileChooser.APPROVE_OPTION) {
+                    File file = saveJfc.getSelectedFile();
+                    String path = "";
+                    if (file.isDirectory()) {
+                        path = file.getAbsolutePath() + "/output.docx";
+                    } else {
+                        System.out.println(file.getAbsolutePath());
+                        path = file.getAbsolutePath();
+                        if (!path.toLowerCase().endsWith(".docx")) {
+                            path += ".docx";
+                        }
                     }
-                }
-                else return;
-                File nwFile=new File(path);
-                try {
+                    try {
 
-                    //A4  horizontal direction true
-                    WordprocessingMLPackage wordMLPackage=WordprocessingMLPackage.createPackage(PageSizePaper.A4,true);
-                    configFont(wordMLPackage);
+                        //A4  horizontal direction true
+                        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage(PageSizePaper.A4, true);
+                        XHTMLImporterImpl xhtmlImporter = new XHTMLImporterImpl(wordMLPackage);
+                        wordMLPackage.getMainDocumentPart().getContent().addAll(xhtmlImporter.convert(htmlPane.getXHTML(), null));
 
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+                        wordMLPackage.save(new File(path));     //export docx file
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -134,23 +134,5 @@ public class UtilMenu extends JMenuBar {
         });
     }
 
-    //config Chinese font-family
-    private void configFont(WordprocessingMLPackage wordMLPackage) throws Exception {
-        Mapper fontMapper = new IdentityPlusMapper();
-        wordMLPackage.setFontMapper(fontMapper);
-
-        String fontFamily = "SimSun";
-
-        URL simsunUrl = this.getClass().getResource("/org/noahx/html2docx/simsun.ttc"); //加载字体文件（解决linux环境下无中文字体问题）
-        PhysicalFonts.addPhysicalFont(simsunUrl);
-        PhysicalFont simsunFont = PhysicalFonts.get(fontFamily);
-        fontMapper.put(fontFamily, simsunFont);
-
-        RFonts rfonts = Context.getWmlObjectFactory().createRFonts(); //设置文件默认字体
-        rfonts.setAsciiTheme(null);
-        rfonts.setAscii(fontFamily);
-        wordMLPackage.getMainDocumentPart().getPropertyResolver()
-                .getDocumentDefaultRPr().setRFonts(rfonts);
-    }
 }
 

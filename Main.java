@@ -1,3 +1,4 @@
+import GUI.Catalog;
 import GUI.DisplayPane;
 import GUI.Editor;
 import GUI.UtilMenu;
@@ -9,27 +10,33 @@ import javax.swing.*;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        JFrame  frame=new JFrame("MyFrame");
-        frame.setLayout(new GridLayout(1,2));
+        JFrame frame=new JFrame("MyFrame");
+        Container rootPane=frame.getContentPane();
+        frame.setLayout(new BoxLayout(rootPane,BoxLayout.X_AXIS));
 
-        JPanel panel1=new JPanel();
-        JPanel panel2=new JPanel();
-        panel1.setLayout(null);
-        panel2.setLayout(null);
+        JPanel left=new JPanel();
+        JPanel middle=new JPanel();
+        JPanel right=new JPanel();
+        left.setLayout(null);
+        middle.setLayout(null);
+        right.setLayout(new BoxLayout(right,BoxLayout.Y_AXIS));
 
+        Catalog catalog=new Catalog();
         DisplayPane displayPane=new DisplayPane();
-        panel1.add(displayPane);
+        Editor editor=new Editor(displayPane,catalog);
 
-        Editor editor=new Editor(displayPane);
-        panel2.add(editor);
+        left.add(editor);
+        middle.add(displayPane);
+        right.add(catalog);
 
         UtilMenu menuBar=new UtilMenu(editor,displayPane);
         frame.setJMenuBar(menuBar);
 
-        frame.add(panel1);
-        frame.add(panel2);
+        rootPane.add(left);
+        rootPane.add(middle);
+        rootPane.add(right);
 
-        frame.setSize(800,600);
+        frame.setSize(1000,600);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
