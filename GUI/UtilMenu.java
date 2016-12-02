@@ -27,17 +27,17 @@ public class UtilMenu extends JMenuBar {
         this.saveJfc.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
 
         // prevent to choose all types of files
-        this.openJfc.setAcceptAllFileFilterUsed(false);
         this.saveJfc.setAcceptAllFileFilterUsed(false);
 
         //set limit types of files can be chosen
         this.openJfc.addChoosableFileFilter(new LowesFileFilter(".css","css 文件(*.css)"));
+        this.openJfc.addChoosableFileFilter(new LowesFileFilter(".md","md 文件(*.md)"));
         this.saveJfc.addChoosableFileFilter(new LowesFileFilter(".docx","docx 文件 (*.docx)"));
 
         JMenu fileMenu=new JMenu("file");
         JMenu resetMenu=new JMenu("edit");
 
-        JMenuItem importCss=new JMenuItem("Import CSS",'I');
+        JMenuItem importCss=new JMenuItem("Import file",'I');
         JMenuItem exportDocs=new JMenuItem("Export as docx",'E');
         JMenuItem exitItem=new JMenuItem("exit");
 
@@ -64,29 +64,34 @@ public class UtilMenu extends JMenuBar {
         importCss.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                openJfc.setDialogTitle("导入css文件");
+                openJfc.setDialogTitle("导入.md或.css文件");
                 int option=openJfc.showDialog(null,"导入");
                 if(option==JFileChooser.APPROVE_OPTION) {
                     File file = openJfc.getSelectedFile();
                     if (file.isFile()) {
                         try {
-                            BufferedReader cssData = new BufferedReader(
+                            BufferedReader content = new BufferedReader(
                                     new InputStreamReader(
                                             new FileInputStream(file)
                                     )
                             );
-                            String temp = "", cssText = "";
-                            while ((temp = cssData.readLine()) != null) {
-                                cssText += temp;
+                            String temp = "", text = "";
+                            while ((temp = content.readLine()) != null) {
+                                text += temp+"\n";
                             }
-                            htmlPane.importCss(cssText);        //import css
-                            editor.generateHTML(htmlPane);      //refresh htmlPan
-
-                        } catch (Exception e1) {
+                            if (file.getName().endsWith(".css")) {       //if css
+                                htmlPane.importCss(text);        //import css
+                                editor.generateHTML(htmlPane);      //refresh htmlPan
+                            }
+                            else if(file.getName().endsWith(".md")){       //if markdown
+                                editor.getEditor().setText(text);
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(null, "请导入.css或.md文件", "警告", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        }catch (Exception e1){
                             e1.printStackTrace();
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "请导入.css文件", "警告", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }

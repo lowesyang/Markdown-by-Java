@@ -1,7 +1,4 @@
-import GUI.Catalog;
-import GUI.DisplayPane;
-import GUI.Editor;
-import GUI.UtilMenu;
+import GUI.*;
 
 import java.awt.*;
 import java.io.IOException;
@@ -19,14 +16,24 @@ public class Main {
         JPanel right=new JPanel();
         left.setLayout(null);
         middle.setLayout(null);
-        right.setLayout(new BoxLayout(right,BoxLayout.Y_AXIS));
+        right.setLayout(null);
+
+        JLabel editLabel=new JLabel("编辑器",JLabel.CENTER);
+        editLabel.setBounds(0,0,300,50);
+        JLabel displayLabel=new JLabel("预览",JLabel.CENTER);
+        displayLabel.setBounds(0,0,300,50);
+        JLabel catalogLabel=new JLabel("目录",JLabel.CENTER);
+        catalogLabel.setBounds(0,0,200,50);
 
         Catalog catalog=new Catalog();
         DisplayPane displayPane=new DisplayPane();
         Editor editor=new Editor(displayPane,catalog);
 
+        left.add(editLabel);
         left.add(editor);
+        middle.add(displayLabel);
         middle.add(displayPane);
+        right.add(catalogLabel);
         right.add(catalog);
 
         UtilMenu menuBar=new UtilMenu(editor,displayPane);
