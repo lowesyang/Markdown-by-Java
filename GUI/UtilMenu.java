@@ -64,7 +64,7 @@ public class UtilMenu extends JMenuBar {
                             BufferedReader content = new BufferedReader(
                                     new InputStreamReader(
                                             new FileInputStream(file)
-                                    )
+                                    ),2*1024*1024
                             );
                             String temp = "", text = "";
                             while ((temp = content.readLine()) != null) {

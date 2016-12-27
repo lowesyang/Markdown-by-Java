@@ -42,7 +42,7 @@ public class Catalog extends JScrollPane{
     public void update(String markdown) throws IOException {
         this.model.removeAllElements();
         this.arrayList.clear();
-        BufferedReader content=new BufferedReader(new StringReader(markdown));
+        BufferedReader content=new BufferedReader(new StringReader(markdown),5*1024*1024);
         String temp="";
         int row=0;
         int i=0;
